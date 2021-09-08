@@ -1,0 +1,130 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using WebApi_ComprasStock.Data;
+using WebApi_ComprasStock.Entidades;
+using WebApi_ComprasStock.DTOs.Productos;
+using WebApi_ComprasStock.DTOs;
+using WebApi_ComprasStock.Utilidades;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
+
+namespace WebApi_ComprasStock.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TiposProductoController : CustomBaseController
+    {
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly IConfiguration configuration;
+        private readonly ApplicationDBContext context;
+        private readonly ILogger seriLogger;
+        private readonly IMapper mapper;
+
+        public TiposProductoController(UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IConfiguration configuration,
+            ApplicationDBContext context,
+            ILogger seriLogger, IMapper mapper)
+            : base(context, seriLogger, mapper)
+        {
+            this.userManager = userManager;
+            this.signInManager = signInManager;
+            this.configuration = configuration;
+            this.context = context;
+            this.seriLogger = seriLogger;
+            this.mapper = mapper;
+        }
+        //______________________________________________________________________________________________________________
+        // GET api/<TiposProductoController>/5
+        [HttpGet("{id:int}", Name = "obtenerTipoProd")]
+        public async Task<ActionResult<TipoProductoDTO>> Get(int id)
+        {
+            try
+            {
+                return await Get<TipoProducto, TipoProductoDTO>(id);
+            }
+            catch (Exception ex)
+            {
+                seriLogger.Error("Error al solicitar datos TipoProducto x id", ex.Message);
+                return BadRequest();
+            }
+        }
+
+        //____________________________________________________________________________________________________
+        // GET api/<CategoriasController>/5
+        [HttpGet("/tipoProductoCompleta/{id:int}", Name = "TipoProductoCompleta")]
+        public async Task<ActionResult<TipoProductoDTOCompleta>> TipoProductoCompleta(int id)
+        {
+            try
+            {
+                var entidad = await context.TipoProductos.Where(x => x.Id == id)
+                    .Include(productos => productos.Productos)
+                    .Include(categoria => categoria.Categorias)
+                    .FirstOrDefaultAsync();
+                var respuesta = mapper.Map<TipoProductoDTOCompleta>(entidad);
+                return respuesta;
+            }
+            catch (Exception ex)
+            {
+                seriLogger.Error("Error al solicitar datos TipoProducto completa x id", ex.Message);
+                return BadRequest();
+            }
+        }
+
+        //____________________________________________________________________________________________________
+        [HttpGet("listadoTipoProducto")]
+        public async Task<ActionResult<List<TipoProductoDTO>>> ListadoTipoProducto([FromQuery] PaginacionDTO paginacionDTO)
+        {
+            try
+            {
+                var respuesta = await Get<TipoProducto, TipoProductoDTO>(paginacionDTO);
+
+                return respuesta;
+            }
+            catch (Exception ex)
+            {
+                seriLogger.Error("Error al solicitar listado de TipoProductos", ex.Message);
+                return BadRequest();
+            }
+        }
+        //____________________________________________________________________________________________________
+        //POST api/<TiposProductoController>
+        [HttpPost]
+        public async Task<ActionResult> Post([FromBody] TipoProductoCreacionDTO creacionDTO)
+        {
+            try
+            {
+                return await Post<TipoProductoCreacionDTO, TipoProducto, TipoProductoDTO>(creacionDTO, "obtenerTipoProd");
+            }
+            catch (Exception ex)
+            {
+                seriLogger.Error("Error al generar el nuevo TipoProducto", ex.Message);
+                return BadRequest();
+            }
+        }
+
+        //____________________________________________________________________________________________________
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody] TipoProductoCreacionDTO creacionDTO)
+        {
+            try
+            {
+                return await Put<TipoProductoCreacionDTO, TipoProducto>(id, creacionDTO);
+            }
+            catch (Exception ex)
+            {
+                seriLogger.Error($"Error al modificar el TipoProducto con Id: {id}", ex.Message);
+                return BadRequest();
+            }
+        }
+        //____________________________________________________________________________________________________
+    }
+}
