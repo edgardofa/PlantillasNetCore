@@ -105,6 +105,7 @@ namespace WebApi_ComprasStock.Controllers
                 else
                 {
                     seriLogger.Warning($"El listado de {nombreT} no devuelve registros");
+                    ModelState.AddModelError("NotFound", "No se encontraron registros para el listado solicitado");
                     return NotFound("No se encontraron registros para el listado solicitado");
                 }
             }
@@ -121,6 +122,7 @@ namespace WebApi_ComprasStock.Controllers
 
             if(entidad== null)
             {
+                ModelState.AddModelError("NotFound", "No se encontro registro para la entidad solicitada");
                 return NotFound();
             }
 

@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApi_ComprasStock.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/categorias")]
     [ApiController]
     public class CategoriasController : CustomBaseController
     {
@@ -42,11 +42,13 @@ namespace WebApi_ComprasStock.Controllers
         }
         //______________________________________________________________________________________________________________
         // GET api/<CategoriasController>/5
-        [HttpGet("{id:int}", Name = "obtenerCategoria")]
-        public async Task<ActionResult<CategoriaDTO>> Get(int id)
+        [HttpGet("categoriaxid", Name = "obtenerCategoria")]
+        public async Task<ActionResult<CategoriaDTO>> ObtenerCategoria([FromHeader] int id)
         {
             try
             {
+                List<CategoriaDTO> lista=null;
+                lista.Add(new CategoriaDTO() { CodigoCategoria = "1", Descripcion = "Algo", Id = 0 });
                 return await Get<Categorias, CategoriaDTO>(id);
             }
             catch (Exception ex)

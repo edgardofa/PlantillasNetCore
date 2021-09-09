@@ -81,25 +81,25 @@ namespace WebApi_ComprasStock
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(opciones =>
-                {
-                    opciones.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Configuration["llavejwt"])),
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
-            //........................................................................................
-            services.AddAuthorization(opciones =>
-            {
-                opciones.AddPolicy("EsAdmin", policy => policy.RequireClaim("role", "admin"));
-            });
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(opciones =>
+            //    {
+            //        opciones.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuer = false,
+            //            ValidateAudience = false,
+            //            ValidateLifetime = true,
+            //            ValidateIssuerSigningKey = true,
+            //            IssuerSigningKey = new SymmetricSecurityKey(
+            //                Encoding.UTF8.GetBytes(Configuration["llavejwt"])),
+            //            ClockSkew = TimeSpan.Zero
+            //        };
+            //    });
+            ////........................................................................................
+            //services.AddAuthorization(opciones =>
+            //{
+            //    opciones.AddPolicy("EsAdmin", policy => policy.RequireClaim("role", "admin"));
+            //});
             //........................................................................................
             services.AddControllers(opciones =>
                 {
@@ -137,9 +137,9 @@ namespace WebApi_ComprasStock
 
             app.UseCors();
 
-            app.UseAuthentication();
+            //app.UseAuthentication();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

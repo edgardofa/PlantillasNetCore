@@ -17,7 +17,7 @@ using WebApi_ComprasStock.Utilidades;
 
 namespace WebApi_ComprasStock.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/rubros")]
     [ApiController]
     public class RubrosController : CustomBaseController
     {
@@ -44,8 +44,8 @@ namespace WebApi_ComprasStock.Controllers
         }
         //______________________________________________________________________________________________________________
         // GET api/<RubrosController>/5
-        [HttpGet("{id:int}", Name = "obtenerRubro")]
-        public async Task<ActionResult<RubroDTO>> Get(int id)
+        [HttpGet("rubroxid", Name = "obtenerRubro")]
+        public async Task<ActionResult<RubroDTO>> ObtenerRubro([FromHeader]int id)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace WebApi_ComprasStock.Controllers
         /// <param name="id">Id del Rubro a consultar</param>
         /// <returns></returns>
         [HttpGet("/rubroCompleta/{id:int}", Name = "RubroCompleta")]
-        public async Task<ActionResult<RubroDTOCompleta>> RubroCompleta(int id)
+        public async Task<ActionResult<RubroDTOCompleta>> RubroCompleta([FromHeader] int id)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace WebApi_ComprasStock.Controllers
         }
         //____________________________________________________________________________________________________
         [HttpGet("listadoRubros")]
-        public async Task<ActionResult<List<RubroDTO>>> ListadoRubros([FromQuery] PaginacionDTO paginacionDTO)
+        public async Task<ActionResult<List<RubroDTO>>> ListadoRubros([FromBody] PaginacionDTO paginacionDTO)
         {
             try
             {
